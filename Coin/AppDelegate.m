@@ -7,11 +7,29 @@
 //
 
 #import "AppDelegate.h"
+#import "GAI.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // Automatically send uncaught exceptions to Google Analytics.
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    // Set Google Analytics dispatch interval
+    [GAI sharedInstance].dispatchInterval = 5;
+    // Initialize tracker
+    [[GAI sharedInstance] trackerWithTrackingId:kGoogleAnalyticsID];
+    
+    if ([[NSUserDefaults standardUserDefaults] stringForKey:@"currency"] == nil) {
+        
+        NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
+        [standardUserDefaults setObject:@"USD" forKey:@"currency"];
+        [standardUserDefaults setBool:NO forKey:@"opened"];
+        [standardUserDefaults setBool:NO forKey:@"chartOpened"];
+        [standardUserDefaults synchronize];
+        NSLog(@"First time opening the app, set opened to 'NO'");
+    }
+    
     // Override point for customization after application launch.
     return YES;
 }
